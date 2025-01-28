@@ -19,7 +19,7 @@ package v3.services
 import cats.implicits.toBifunctorOps
 import models.errors._
 import shared.controllers.RequestContext
-import shared.models.errors.{InternalError, MtdError, NinoFormatError, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
+import shared.models.errors.{InternalError, MtdError, NinoFormatError, RuleOutsideAmendmentWindow, RuleTaxYearNotEndedError, RuleTaxYearNotSupportedError}
 import shared.services.{BaseService, ServiceOutcome}
 import v3.connectors.CreateConnector
 import v3.models.request.create.CreateRequestData
@@ -47,6 +47,7 @@ class CreateService @Inject() (connector: CreateConnector) extends BaseService {
       "INVALID_REQUEST_BEFORE_TAX_YEAR" -> RuleTaxYearNotEndedError,
       "CONFLICT"                        -> RuleDuplicateSubmissionError,
       "INVALID_REQUEST_DUPLICATE_MONTH" -> RuleDuplicatePeriodError,
+      "OUTSIDE_AMENDMENT_WINDOW"        -> RuleOutsideAmendmentWindow,
       "SERVER_ERROR"                    -> InternalError,
       "SERVICE_UNAVAILABLE"             -> InternalError,
       "INVALID_CORRELATIONID"           -> InternalError
