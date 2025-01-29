@@ -26,6 +26,7 @@ import shared.models.errors.{
   InternalError,
   MtdError,
   NinoFormatError,
+  RuleOutsideAmendmentWindow,
   RuleTaxYearNotEndedError,
   RuleTaxYearNotSupportedError
 }
@@ -95,6 +96,7 @@ class CreateServiceSpec extends UnitSpec {
           ("INVALID_REQUEST_BEFORE_TAX_YEAR", RuleTaxYearNotEndedError),
           ("CONFLICT", RuleDuplicateSubmissionError),
           ("INVALID_REQUEST_DUPLICATE_MONTH", RuleDuplicatePeriodError),
+          ("OUTSIDE_AMENDMENT_WINDOW", RuleOutsideAmendmentWindow),
           ("SERVER_ERROR", InternalError),
           ("SERVICE_UNAVAILABLE", InternalError),
           ("INVALID_CORRELATIONID", InternalError)

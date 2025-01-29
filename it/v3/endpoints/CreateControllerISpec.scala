@@ -29,6 +29,7 @@ import shared.models.errors.{
   NinoFormatError,
   RuleDateRangeInvalidError,
   RuleIncorrectOrEmptyBodyError,
+  RuleOutsideAmendmentWindow,
   RuleTaxYearNotEndedError,
   RuleTaxYearNotSupportedError,
   ToDateFormatError
@@ -118,7 +119,8 @@ class CreateControllerISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_DATE_RANGE", BAD_REQUEST, RuleDeductionsDateRangeInvalidError),
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_BEFORE_TAX_YEAR", BAD_REQUEST, RuleTaxYearNotEndedError),
           (CONFLICT, "CONFLICT", BAD_REQUEST, RuleDuplicateSubmissionError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_DUPLICATE_MONTH", BAD_REQUEST, RuleDuplicatePeriodError)
+          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_DUPLICATE_MONTH", BAD_REQUEST, RuleDuplicatePeriodError),
+          (BAD_REQUEST, "OUTSIDE_AMENDMENT_WINDOW", BAD_REQUEST, RuleOutsideAmendmentWindow)
         )
 
         val extraTysErrors = List(
