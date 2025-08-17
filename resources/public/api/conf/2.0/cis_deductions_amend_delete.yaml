@@ -11,5 +11,3 @@ delete:
   security:
     - User-Restricted:
         - write:self-assessment
-  parameters:
-    - $ref: './common/queryParameters.yaml#/components/parameters/taxYear'
