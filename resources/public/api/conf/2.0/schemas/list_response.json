@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "List CIS Deductions",
   "description": "List CIS Deductions",
   "type": "object",
