@@ -51,8 +51,6 @@ components:
       required: false
 
     correlationId:
-      in: header
-      type: string
       description: |
         Unique ID for operation tracking
         String, 36 characters.
@@ -62,8 +60,6 @@ components:
       required: true
 
     linkHeader:
-      name: "Link"
-      in: header
       description: |
         URL of the documentation for the API.
       schema:
@@ -72,8 +68,6 @@ components:
       required: false
 
     deprecationHeader:
-      name: "Deprecation"
-      in: header
       description: |
         The deprecation date/time for this endpoint.
       schema:
@@ -82,8 +76,6 @@ components:
       required: false
 
     sunsetHeader:
-      name: "Sunset"
-      in: header
       description: |
         The earliest date/time this endpoint will become unavailable after deprecation.
       schema:
