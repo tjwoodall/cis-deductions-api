@@ -35,8 +35,7 @@ requestBody:
       examples:
         example-1:
           description: Amend CIS request
-          value:
-            $ref: './examples/AmendCisDeductions/amend_cis_deductions_request.json'
+          externalValue: './examples/AmendCisDeductions/amend_cis_deductions_request.json'
 
 responses:
   "204":
