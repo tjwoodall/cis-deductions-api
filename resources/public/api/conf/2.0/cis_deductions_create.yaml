@@ -35,8 +35,7 @@ post:
         examples:
           example-1:
             description: Create CIS request
-            value:
-              $ref: './examples/create_request.json'
+            externalValue: './examples/create_request.json'
 
   responses:
     "200":
@@ -57,8 +56,7 @@ post:
           examples:
             example-user-response:
               description: Example user response
-              value:
-                $ref: './examples/example_1.json'
+              externalValue: './examples/example_1.json'
     "400":
       description: Bad request
       headers:
