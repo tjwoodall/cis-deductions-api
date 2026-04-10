@@ -138,18 +138,23 @@ paths:
           content:
             application/json:
               schema:
-                title: List CIS Deductions
                 required:
                 - cisDeductions
                 type: object
                 properties:
                   totalDeductionAmount:
+                    multipleOf: 0.01
+                    maximum: 99999999999.99
+                    minimum: 0
                     type: number
                     description: The total amount of tax deducted by CIS contractors.
                       The value must be between 0 and 99999999999.99 up to 2 decimal
                       places.
                     example: 5000.99
                   totalCostOfMaterials:
+                    multipleOf: 0.01
+                    maximum: 99999999999.99
+                    minimum: 0
                     type: number
                     description: The total cost of materials incurred under CIS by
                       the subcontractor across all of the CIS contractors that they
@@ -157,6 +162,9 @@ paths:
                       up to 2 decimal places.
                     example: 5000.99
                   totalGrossAmountPaid:
+                    multipleOf: 0.01
+                    maximum: 99999999999.99
+                    minimum: 0
                     type: number
                     description: The total gross amount paid by CIS contractors. The
                       value must be between 0 and 99999999999.99 up to 2 decimal places.
@@ -175,18 +183,26 @@ paths:
                       properties:
                         fromDate:
                           type: string
-                          description: CIS start date of a tax year.
+                          description: |-
+                            CIS start date of a tax year.
+
+                            Must conform to the format `YYYY-MM-DD`
+                          format: date
                           example: 2020-04-06
                         toDate:
                           type: string
-                          description: CIS end date of a tax year.
+                          description: |-
+                            CIS end date of a tax year.
+
+                            Must conform to the format `YYYY-MM-DD`
+                          format: date
                           example: 2021-04-05
                         contractorName:
-                          maximum: 105
-                          minimum: 1
+                          pattern: "^.{1,105}$"
                           type: string
                           description: The name of the contractor the subcontractor
                             worked for.
+                          example: Some Contractor
                         employerRef:
                           pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
                           type: string
@@ -194,18 +210,27 @@ paths:
                             \ number."
                           example: 123/AC80213
                         totalDeductionAmount:
+                          multipleOf: 0.01
+                          maximum: 99999999999.99
+                          minimum: 0
                           type: number
                           description: The total amount of tax deducted by a CIS contractor.
                             The value must be between 0 and 99999999999.99 up to 2
                             decimal places.
                           example: 5000.99
                         totalCostOfMaterials:
+                          multipleOf: 0.01
+                          maximum: 99999999999.99
+                          minimum: 0
                           type: number
                           description: The total cost of materials incurred under
                             CIS by the subcontractor. This value must be between 0
                             and 99999999999.99 up to 2 decimal places.
                           example: 5000.99
                         totalGrossAmountPaid:
+                          multipleOf: 0.01
+                          maximum: 99999999999.99
+                          minimum: 0
                           type: number
                           description: The total gross amount paid by a CIS contractor.
                             The value must be between 0 and 99999999999.99 up to 2
@@ -225,13 +250,19 @@ paths:
                             properties:
                               deductionFromDate:
                                 type: string
-                                description: The From date when the deduction was
-                                  made within the CIS tax year period.
+                                description: |-
+                                  The From date when the deduction was made within the CIS tax year period.
+
+                                  Must conform to the format `YYYY-MM-DD`
+                                format: date
                                 example: 2020-07-06
                               deductionToDate:
                                 type: string
-                                description: The To date when the deduction was made
-                                  within the CIS tax year period.
+                                description: |-
+                                  The To date when the deduction was made within the CIS tax year period.
+
+                                  Must conform to the format `YYYY-MM-DD`
+                                format: date
                                 example: 2020-08-05
                               deductionAmount:
                                 multipleOf: 0.01
@@ -250,7 +281,7 @@ paths:
                                 description: The cost of materials incurred under
                                   CIS. This value must be between 0 and 99999999999.99
                                   up to 2 decimal places.
-                                example: 50.00
+                                example: 50.0
                               grossAmountPaid:
                                 multipleOf: 0.01
                                 maximum: 99999999999.99
@@ -262,22 +293,23 @@ paths:
                                 example: 5000.99
                               submissionDate:
                                 type: string
-                                description: The date the deduction was submitted.
+                                description: "The date the deduction was submitted,\
+                                  \ in the format `YYYY-MM-DDThh:mm:ss.SSZ`"
+                                format: date-time
                                 example: 2020-05-11T16:38:57Z
                               submissionId:
                                 type: string
                                 description: The unique identifier for the submission.
+                                format: uuid
                                 example: 4557ecb5-fd32-48cc-81f5-e6acd1099f3c
                               source:
                                 type: string
                                 description: The source of the data.
-                                example: customer or contractor
-                description: List CIS Deductions
-              examples:
-                example-response:
-                  description: Example Response
-                  value:
-                    $ref: ./examples/list_response_1.json
+                                enum:
+                                - customer
+                                - contractor
+              example:
+                $ref: ./examples/cis_deductions_retrieve/response.json
         "400":
           description: Bad request
           headers:
@@ -549,7 +581,6 @@ paths:
         content:
           application/json:
             schema:
-              title: Create CIS Deduction
               required:
               - contractorName
               - employerRef
@@ -560,18 +591,25 @@ paths:
               properties:
                 fromDate:
                   type: string
-                  description: CIS tax year start date. The minimum tax year is 2020-21.
-                    The minimum tax year in Sandbox is 2019-20.
+                  description: |-
+                    CIS tax year start date. The minimum tax year is 2020-21. The minimum tax year in Sandbox is 2019-20.
+
+                    Must conform to the format `YYYY-MM-DD`
+                  format: date
                   example: 2020-04-06
                 toDate:
                   type: string
-                  description: CIS tax year end date. The minimum tax year is 2020-21.
-                    The minimum tax year in Sandbox is 2019-20.
+                  description: |-
+                    CIS tax year end date. The minimum tax year is 2020-21. The minimum tax year in Sandbox is 2019-20.
+
+                    Must conform to the format `YYYY-MM-DD`
+                  format: date
                   example: 2021-04-05
                 contractorName:
                   type: string
                   description: The name of the contractor the subcontractor worked
                     for.
+                  example: Some Contractor
                 employerRef:
                   pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
                   type: string
@@ -599,13 +637,19 @@ paths:
                         example: 5000.99
                       deductionFromDate:
                         type: string
-                        description: The From date when the deduction was made within
-                          the CIS tax year period.
+                        description: |-
+                          The From date when the deduction was made within the CIS tax year period.
+
+                          Must conform to the format `YYYY-MM-DD`
+                        format: date
                         example: 2020-07-06
                       deductionToDate:
                         type: string
-                        description: The To date when the deduction was made within
-                          the CIS tax year period.
+                        description: |-
+                          The To date when the deduction was made within the CIS tax year period.
+
+                          Must conform to the format `YYYY-MM-DD`
+                        format: date
                         example: 2020-08-05
                       costOfMaterials:
                         multipleOf: 0.01
@@ -624,12 +668,8 @@ paths:
                         description: The gross amount paid under CIS. This value must
                           be between 0 and 99999999999.99 up to 2 decimal places.
                         example: 5000.99
-              description: Create CIS Deduction
-            examples:
-              example-1:
-                description: Create CIS request
-                value:
-                  $ref: ./examples/create_request.json
+            example:
+              $ref: ./examples/cis_deductions_create/request.json
       responses:
         "200":
           description: Success
@@ -666,7 +706,6 @@ paths:
           content:
             application/json:
               schema:
-                title: Create CIS Deduction
                 required:
                 - submissionId
                 type: object
@@ -677,12 +716,8 @@ paths:
                     description: A unique identifier for the customer provided CIS
                       deduction amendment.
                     example: ab123aaa-65ab-488c-9120-f63abc14b9n1
-                description: Create CIS Deduction
-              examples:
-                example-user-response:
-                  description: Example user response
-                  value:
-                    $ref: ./examples/example_1.json
+              example:
+                $ref: ./examples/cis_deductions_create/response.json
         "400":
           description: Bad request
           headers:
@@ -981,8 +1016,6 @@ paths:
         content:
           application/json:
             schema:
-              title: |
-                Amend CIS Deductions for Subcontractor
               required:
               - periodData
               type: object
@@ -998,6 +1031,9 @@ paths:
                     type: object
                     properties:
                       deductionAmount:
+                        multipleOf: 0.01
+                        maximum: 99999999999.99
+                        minimum: 0
                         type: number
                         description: The amount of tax deducted by the contractor.
                           The value must be between 0 and 99999999999.99 up to 2 decimal
@@ -1005,35 +1041,42 @@ paths:
                         example: 5000.99
                       deductionFromDate:
                         type: string
-                        description: The From date when the deduction was made within
-                          the CIS tax year period.
+                        description: |-
+                          The From date when the deduction was made within the CIS tax year period.
+
+                          Must conform to the format `YYYY-MM-DD`
+                        format: date
                         example: 2020-04-06
                       deductionToDate:
                         type: string
-                        description: The To date when the deduction was made within
-                          the CIS tax year period.
+                        description: |-
+                          The To date when the deduction was made within the CIS tax year period.
+
+                          Must conform to the format `YYYY-MM-DD`
+                        format: date
                         example: 2020-04-05
                       costOfMaterials:
+                        multipleOf: 0.01
+                        maximum: 99999999999.99
+                        minimum: 0
                         type: number
                         description: The cost of materials incurred under CIS. This
                           value must be between 0 and 99999999999.99 up to 2 decimal
                           places.
                         example: 5000.99
                       grossAmountPaid:
+                        multipleOf: 0.01
+                        maximum: 99999999999.99
+                        minimum: 0
                         type: number
                         description: The gross amount paid under CIS. The value must
                           be between 0 and 99999999999.99 up to 2 decimal places.
                         example: 5000.99
-              description: This endpoint allows as developer to amend a CIS deductions
-                which has been previously populated
-            examples:
-              example-1:
-                description: Amend CIS request
-                value:
-                  $ref: ./examples/AmendCisDeductions/amend_cis_deductions_request.json
+            example:
+              $ref: ./examples/cis_deductions_amend/request.json
       responses:
         "204":
-          description: No Content
+          description: Success (No Content)
           headers:
             X-CorrelationId:
               description: |
@@ -1379,7 +1422,7 @@ paths:
           example: "-"
       responses:
         "204":
-          description: No Content
+          description: Success (No Content)
           headers:
             X-CorrelationId:
               description: |
@@ -1613,24 +1656,32 @@ paths:
         - write:self-assessment
 components:
   schemas:
-    list_response:
-      title: List CIS Deductions
+    response:
       required:
       - cisDeductions
       type: object
       properties:
         totalDeductionAmount:
+          multipleOf: 0.01
+          maximum: 99999999999.99
+          minimum: 0
           type: number
           description: The total amount of tax deducted by CIS contractors. The value
             must be between 0 and 99999999999.99 up to 2 decimal places.
           example: 5000.99
         totalCostOfMaterials:
+          multipleOf: 0.01
+          maximum: 99999999999.99
+          minimum: 0
           type: number
           description: The total cost of materials incurred under CIS by the subcontractor
             across all of the CIS contractors that they worked for. This value must
             be between 0 and 99999999999.99 up to 2 decimal places.
           example: 5000.99
         totalGrossAmountPaid:
+          multipleOf: 0.01
+          maximum: 99999999999.99
+          minimum: 0
           type: number
           description: The total gross amount paid by CIS contractors. The value must
             be between 0 and 99999999999.99 up to 2 decimal places.
@@ -1649,34 +1700,51 @@ components:
             properties:
               fromDate:
                 type: string
-                description: CIS start date of a tax year.
+                description: |-
+                  CIS start date of a tax year.
+
+                  Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2020-04-06
               toDate:
                 type: string
-                description: CIS end date of a tax year.
+                description: |-
+                  CIS end date of a tax year.
+
+                  Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2021-04-05
               contractorName:
-                maximum: 105
-                minimum: 1
+                pattern: "^.{1,105}$"
                 type: string
                 description: The name of the contractor the subcontractor worked for.
+                example: Some Contractor
               employerRef:
                 pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
                 type: string
                 description: "A unique identifier, the contractor reference number."
                 example: 123/AC80213
               totalDeductionAmount:
+                multipleOf: 0.01
+                maximum: 99999999999.99
+                minimum: 0
                 type: number
                 description: The total amount of tax deducted by a CIS contractor.
                   The value must be between 0 and 99999999999.99 up to 2 decimal places.
                 example: 5000.99
               totalCostOfMaterials:
+                multipleOf: 0.01
+                maximum: 99999999999.99
+                minimum: 0
                 type: number
                 description: The total cost of materials incurred under CIS by the
                   subcontractor. This value must be between 0 and 99999999999.99 up
                   to 2 decimal places.
                 example: 5000.99
               totalGrossAmountPaid:
+                multipleOf: 0.01
+                maximum: 99999999999.99
+                minimum: 0
                 type: number
                 description: The total gross amount paid by a CIS contractor. The
                   value must be between 0 and 99999999999.99 up to 2 decimal places.
@@ -1695,13 +1763,19 @@ components:
                   properties:
                     deductionFromDate:
                       type: string
-                      description: The From date when the deduction was made within
-                        the CIS tax year period.
+                      description: |-
+                        The From date when the deduction was made within the CIS tax year period.
+
+                        Must conform to the format `YYYY-MM-DD`
+                      format: date
                       example: 2020-07-06
                     deductionToDate:
                       type: string
-                      description: The To date when the deduction was made within
-                        the CIS tax year period.
+                      description: |-
+                        The To date when the deduction was made within the CIS tax year period.
+
+                        Must conform to the format `YYYY-MM-DD`
+                      format: date
                       example: 2020-08-05
                     deductionAmount:
                       multipleOf: 0.01
@@ -1720,7 +1794,7 @@ components:
                       description: The cost of materials incurred under CIS. This
                         value must be between 0 and 99999999999.99 up to 2 decimal
                         places.
-                      example: 50.00
+                      example: 50.0
                     grossAmountPaid:
                       multipleOf: 0.01
                       maximum: 99999999999.99
@@ -1731,17 +1805,21 @@ components:
                       example: 5000.99
                     submissionDate:
                       type: string
-                      description: The date the deduction was submitted.
+                      description: "The date the deduction was submitted, in the format\
+                        \ `YYYY-MM-DDThh:mm:ss.SSZ`"
+                      format: date-time
                       example: 2020-05-11T16:38:57Z
                     submissionId:
                       type: string
                       description: The unique identifier for the submission.
+                      format: uuid
                       example: 4557ecb5-fd32-48cc-81f5-e6acd1099f3c
                     source:
                       type: string
                       description: The source of the data.
-                      example: customer or contractor
-      description: List CIS Deductions
+                      enum:
+                      - customer
+                      - contractor
     error-response:
       required:
       - code
@@ -1754,8 +1832,7 @@ components:
           type: string
           description: The error message
       description: Error Response
-    create_request:
-      title: Create CIS Deduction
+    request:
       required:
       - contractorName
       - employerRef
@@ -1766,17 +1843,24 @@ components:
       properties:
         fromDate:
           type: string
-          description: CIS tax year start date. The minimum tax year is 2020-21. The
-            minimum tax year in Sandbox is 2019-20.
+          description: |-
+            CIS tax year start date. The minimum tax year is 2020-21. The minimum tax year in Sandbox is 2019-20.
+
+            Must conform to the format `YYYY-MM-DD`
+          format: date
           example: 2020-04-06
         toDate:
           type: string
-          description: CIS tax year end date. The minimum tax year is 2020-21. The
-            minimum tax year in Sandbox is 2019-20.
+          description: |-
+            CIS tax year end date. The minimum tax year is 2020-21. The minimum tax year in Sandbox is 2019-20.
+
+            Must conform to the format `YYYY-MM-DD`
+          format: date
           example: 2021-04-05
         contractorName:
           type: string
           description: The name of the contractor the subcontractor worked for.
+          example: Some Contractor
         employerRef:
           pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
           type: string
@@ -1803,13 +1887,19 @@ components:
                 example: 5000.99
               deductionFromDate:
                 type: string
-                description: The From date when the deduction was made within the
-                  CIS tax year period.
+                description: |-
+                  The From date when the deduction was made within the CIS tax year period.
+
+                  Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2020-07-06
               deductionToDate:
                 type: string
-                description: The To date when the deduction was made within the CIS
-                  tax year period.
+                description: |-
+                  The To date when the deduction was made within the CIS tax year period.
+
+                  Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2020-08-05
               costOfMaterials:
                 multipleOf: 0.01
@@ -1827,9 +1917,7 @@ components:
                 description: The gross amount paid under CIS. This value must be between
                   0 and 99999999999.99 up to 2 decimal places.
                 example: 5000.99
-      description: Create CIS Deduction
-    create_response:
-      title: Create CIS Deduction
+    response_1:
       required:
       - submissionId
       type: object
@@ -1840,10 +1928,7 @@ components:
           description: A unique identifier for the customer provided CIS deduction
             amendment.
           example: ab123aaa-65ab-488c-9120-f63abc14b9n1
-      description: Create CIS Deduction
-    amend_cis_deductions_request:
-      title: |
-        Amend CIS Deductions for Subcontractor
+    request_1:
       required:
       - periodData
       type: object
@@ -1859,33 +1944,46 @@ components:
             type: object
             properties:
               deductionAmount:
+                multipleOf: 0.01
+                maximum: 99999999999.99
+                minimum: 0
                 type: number
                 description: The amount of tax deducted by the contractor. The value
                   must be between 0 and 99999999999.99 up to 2 decimal places.
                 example: 5000.99
               deductionFromDate:
                 type: string
-                description: The From date when the deduction was made within the
-                  CIS tax year period.
+                description: |-
+                  The From date when the deduction was made within the CIS tax year period.
+
+                  Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2020-04-06
               deductionToDate:
                 type: string
-                description: The To date when the deduction was made within the CIS
-                  tax year period.
+                description: |-
+                  The To date when the deduction was made within the CIS tax year period.
+
+                  Must conform to the format `YYYY-MM-DD`
+                format: date
                 example: 2020-04-05
               costOfMaterials:
+                multipleOf: 0.01
+                maximum: 99999999999.99
+                minimum: 0
                 type: number
                 description: The cost of materials incurred under CIS. This value
                   must be between 0 and 99999999999.99 up to 2 decimal places.
                 example: 5000.99
               grossAmountPaid:
+                multipleOf: 0.01
+                maximum: 99999999999.99
+                minimum: 0
                 type: number
                 description: The gross amount paid under CIS. The value must be between
                   0 and 99999999999.99 up to 2 decimal places.
                 example: 5000.99
-      description: This endpoint allows as developer to amend a CIS deductions which
-        has been previously populated
-    uid:
+    uuid:
       pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
       type: string
       description: A unique identifier for the customer provided CIS deduction amendment.
