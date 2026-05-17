@@ -201,7 +201,7 @@ paths:
                           format: date
                           example: '2021-04-05'
                         contractorName:
-                          description: The name of the contractor the subcontractor worked for.
+                          description: The name of the contractor the subcontractor worked for. Must not be empty or contain only whitespace.
                           type: string
                           pattern: ^.{1,105}$
                           example: Some Contractor
@@ -622,7 +622,8 @@ paths:
                   format: date
                   example: '2021-04-05'
                 contractorName:
-                  description: The name of the contractor the subcontractor worked for.
+                  description: The name of the contractor the subcontractor worked for. Must not be empty or contain only whitespace.
+                  pattern: ^.{1,105}$
                   type: string
                   example: Some Contractor
                 employerRef:
