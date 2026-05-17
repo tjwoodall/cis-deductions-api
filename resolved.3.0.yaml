@@ -201,7 +201,7 @@ paths:
                           pattern: "^.{1,105}$"
                           type: string
                           description: The name of the contractor the subcontractor
-                            worked for.
+                            worked for. Must not be empty or contain only whitespace.
                           example: Some Contractor
                         employerRef:
                           pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
@@ -606,9 +606,10 @@ paths:
                   format: date
                   example: 2021-04-05
                 contractorName:
+                  pattern: "^.{1,105}$"
                   type: string
                   description: The name of the contractor the subcontractor worked
-                    for.
+                    for. Must not be empty or contain only whitespace.
                   example: Some Contractor
                 employerRef:
                   pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
@@ -1725,6 +1726,7 @@ components:
                 pattern: "^.{1,105}$"
                 type: string
                 description: The name of the contractor the subcontractor worked for.
+                  Must not be empty or contain only whitespace.
                 example: Some Contractor
               employerRef:
                 pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
@@ -1865,8 +1867,10 @@ components:
           format: date
           example: 2021-04-05
         contractorName:
+          pattern: "^.{1,105}$"
           type: string
-          description: The name of the contractor the subcontractor worked for.
+          description: The name of the contractor the subcontractor worked for. Must
+            not be empty or contain only whitespace.
           example: Some Contractor
         employerRef:
           pattern: "^[0-9]{3}\\/[^ ].{0,9}$"
