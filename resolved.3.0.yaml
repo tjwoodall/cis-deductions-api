@@ -101,7 +101,7 @@ paths:
         required: false
         schema:
           type: string
-          example: "-"
+          example: DEFAULT
       responses:
         "200":
           description: Success
@@ -527,16 +527,12 @@ paths:
         ### Test data
         Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
 
-        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                       |
-        |----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-        | N/A - DEFAULT                    | Simulates success response.                                                                                                    |
-        | DEDUCTIONS_DATE_RANGE_INVALID    | Simulates the scenario where the deductions period does not align from the 6th of one month to the 5th of the following month. |
-        | UNALIGNED_DEDUCTIONS_PERIOD      | Simulates the scenario where the deductions periods do not align with the tax year supplied.                                   |
-        | TAX_YEAR_NOT_ENDED               | Simulates the scenario where the submission is for a tax year that has not ended.                                              |
-        | DUPLICATE_SUBMISSION             | Simulates the scenario where CIS deductions already exists for this tax year.                                                  |
-        | DUPLICATE_PERIOD                 | Simulates the scenario where CIS deductions already exists for this period.                                                    |
-        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                |
-        | STATEFUL                         | Performs a stateful create.                                                                                                    |
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+        |----------------------------------|-------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates success response.                                                                     |
+        | DUPLICATE_SUBMISSION             | Simulates the scenario where CIS deductions already exists for this tax year.                   |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                         | Performs a stateful create.                                                                     |
       parameters:
       - name: nino
         in: path
@@ -577,7 +573,19 @@ paths:
         required: false
         schema:
           type: string
-          example: "-"
+          example: DEFAULT
+      - name: suspend-temporal-validations
+        in: header
+        description: "Only in the sandbox environment. When supplied and set to `true`,\
+          \ this header relaxes tax year validation rule to \nallow in-year submissions\
+          \ for endpoints configured for end-of-year submissions. Not supplying the\
+          \ header or setting \nit to `false` results in a `RULE_TAX_YEAR_NOT_ENDED`\
+          \ error for in-year submissions. In Production, the header is\nignored and\
+          \ normal validations apply.\n"
+        required: false
+        schema:
+          type: boolean
+          example: true
       requestBody:
         content:
           application/json:
@@ -962,16 +970,13 @@ paths:
         ### Test data
         Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
 
-        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                       |
-        |----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-        | N/A - DEFAULT                    | Simulates success response.                                                                                                    |
-        | DEDUCTIONS_DATE_RANGE_INVALID    | Simulates the scenario where the deductions period does not align from the 6th of one month to the 5th of the following month. |
-        | UNALIGNED_DEDUCTIONS_PERIOD      | Simulates the scenario where the deductions periods do not align with the tax year supplied.                                   |
-        | DUPLICATE_PERIOD                 | Simulates the scenario where CIS deductions already exists for this period.                                                    |
-        | NOT_FOUND                        | Simulates the scenario where the CIS deduction was not found.                                                                  |
-        | TAX_YEAR_NOT_SUPPORTED           | Simulates the scenario where the tax year is not supported.                                                                    |
-        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                |
-        | STATEFUL                         | Performs a stateful update.                                                                                                    |
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+        |----------------------------------|-------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates success response.                                                                     |
+        | UNALIGNED_DEDUCTIONS_PERIOD      | Simulates the scenario where the deductions periods do not align with the tax year supplied.    |
+        | NOT_FOUND                        | Simulates the scenario where the CIS deduction was not found.                                   |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+        | STATEFUL                         | Performs a stateful update.                                                                     |
       parameters:
       - name: nino
         in: path
@@ -1020,7 +1025,7 @@ paths:
         required: false
         schema:
           type: string
-          example: "-"
+          example: DEFAULT
       requestBody:
         content:
           application/json:
@@ -1428,7 +1433,7 @@ paths:
         required: false
         schema:
           type: string
-          example: "-"
+          example: DEFAULT
       responses:
         "204":
           description: Success (No Content)
@@ -2058,7 +2063,7 @@ components:
       required: false
       schema:
         type: string
-        example: "-"
+        example: DEFAULT
     authorizationWriteScopeHeader:
       name: Authorization
       in: header
@@ -2077,6 +2082,19 @@ components:
       schema:
         type: string
         example: application/json
+    suspendTemporalValidationsHeader:
+      name: suspend-temporal-validations
+      in: header
+      description: "Only in the sandbox environment. When supplied and set to `true`,\
+        \ this header relaxes tax year validation rule to \nallow in-year submissions\
+        \ for endpoints configured for end-of-year submissions. Not supplying the\
+        \ header or setting \nit to `false` results in a `RULE_TAX_YEAR_NOT_ENDED`\
+        \ error for in-year submissions. In Production, the header is\nignored and\
+        \ normal validations apply.\n"
+      required: false
+      schema:
+        type: boolean
+        example: true
     submissionId:
       name: submissionId
       in: path
