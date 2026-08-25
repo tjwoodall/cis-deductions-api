@@ -16,6 +16,7 @@
 
 package v3.retrieve
 
+import api.models.domain.TaxYear
 import api.models.errors.*
 import api.services.*
 import api.support.IntegrationBaseSpec
@@ -130,7 +131,6 @@ class RetrieveControllerISpec extends IntegrationBaseSpec {
 
       def tysHipServiceErrorTest(downstreamStatus: Int, downstreamErrorCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
         s"TYS downstream returns $downstreamErrorCode with status $downstreamStatus" in new TysHipTest {
-
           override def setupStubs(): Unit =
             DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamQueryParams, downstreamStatus, errorBody(downstreamErrorCode))
 
@@ -149,7 +149,7 @@ class RetrieveControllerISpec extends IntegrationBaseSpec {
         (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
         (BAD_REQUEST, "INVALID_PERIOD_START", INTERNAL_SERVER_ERROR, InternalError),
         (BAD_REQUEST, "INVALID_PERIOD_END", INTERNAL_SERVER_ERROR, InternalError),
-        (UNPROCESSABLE_ENTITY, "INVALID_DATE_RANGE", BAD_REQUEST, RuleTaxYearRangeInvalidError),
+        (UNPROCESSABLE_ENTITY, "INVALID_DATE_RANGE", BAD_REQUEST, RuleTaxYearNotSupportedError.dateRangeMsg),
         (BAD_REQUEST, "INVALID_SOURCE", BAD_REQUEST, RuleSourceInvalidError)
       )
       nonTysErrors.foreach(args => nonTysServiceErrorTest.tupled(args))
@@ -159,12 +159,11 @@ class RetrieveControllerISpec extends IntegrationBaseSpec {
         (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
         (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError),
         (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-        (UNPROCESSABLE_ENTITY, "INVALID_DATE_RANGE", BAD_REQUEST, RuleTaxYearRangeInvalidError),
+        (UNPROCESSABLE_ENTITY, "INVALID_DATE_RANGE", BAD_REQUEST, RuleTaxYearNotSupportedError.dateRangeMsg),
         (BAD_REQUEST, "INVALID_SOURCE", BAD_REQUEST, RuleSourceInvalidError),
         (BAD_REQUEST, "INVALID_TAX_YEAR", INTERNAL_SERVER_ERROR, InternalError),
         (BAD_REQUEST, "INVALID_START_DATE", INTERNAL_SERVER_ERROR, InternalError),
         (BAD_REQUEST, "INVALID_END_DATE", INTERNAL_SERVER_ERROR, InternalError),
-        (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_ALIGNED", INTERNAL_SERVER_ERROR, InternalError),
         (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", BAD_REQUEST, RuleTaxYearNotSupportedError),
         (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError)
       )
@@ -214,18 +213,19 @@ class RetrieveControllerISpec extends IntegrationBaseSpec {
   }
 
   private trait NonTysTest extends Test {
-    val taxYear: String                            = "2019-20"
-    val fromDate: String                           = "2019-04-06"
-    val toDate: String                             = "2020-04-05"
+    val taxYear: String                            = "2022-23"
+    val fromDate: String                           = "2022-04-06"
+    val toDate: String                             = "2023-04-05"
     val downstreamQueryParams: Map[String, String] = Map("periodStart" -> fromDate, "periodEnd" -> toDate, "source" -> source)
     val downstreamUri: String                      = s"/income-tax/cis/deductions/$nino"
   }
 
   private trait TysHipTest extends Test {
-    val taxYear: String                            = "2025-26"
-    val fromDate: String                           = "2025-04-06"
-    val toDate: String                             = "2026-04-05"
-    private val downstreamTaxYear: String          = "25-26"
+    val currentTaxYear: TaxYear                    = TaxYear.currentTaxYear
+    val taxYear: String                            = currentTaxYear.asMtd
+    val fromDate: String                           = currentTaxYear.startDate.toString
+    val toDate: String                             = currentTaxYear.endDate.toString
+    private val downstreamTaxYear: String          = currentTaxYear.asTysDownstream
     val downstreamQueryParams: Map[String, String] = Map("startDate" -> fromDate, "endDate" -> toDate, "source" -> source)
     val downstreamUri: String                      = s"/itsa/income-tax/v1/$downstreamTaxYear/cis/deductions/$nino"
   }
