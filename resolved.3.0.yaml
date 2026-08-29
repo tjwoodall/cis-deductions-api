@@ -43,9 +43,7 @@ paths:
         | N/A - DEFAULT                                   | Simulates success response with customer and contractor deductions.                                                         |
         | N/A - DEFAULT <br> using source **all**         | Simulates success response with customer and contractor deductions                                                          |
         | N/A - DEFAULT <br> using source **contractor**  | Simulates success response with contractor deductions.                                                                      |
-        | N/A - DEFAULT <br> using source **customer**    | Simulates success response with customer deductions.                                                                        |
-        | TAX_YEAR_RANGE_INVALID                          | Simulates the scenario where specified tax year is outside the allowable tax years (the current tax year minus four years). |
-        | TAX_YEAR_NOT_SUPPORTED                          | Simulates the scenario where the tax year is not supported.                                                                 |
+        | N/A - DEFAULT <br> using source **customer**    | Simulates success response with customer deductions.                                                                        |                                                               |
         | NOT_FOUND                                       | Simulates the scenario where no data is found.                                                                              |
         | DYNAMIC                                         | The following response values will change to correspond to the values submitted in the request: <br/> &bull; fromDate <br/> &bull; toDate <br/> &bull; deductionFromDate <br/> &bull; deductionToDate <br/> &bull; submissionDate <br/> &bull; source |
         | STATEFUL                                        | Performs a stateful retrieve.                                                                                               |
@@ -61,11 +59,11 @@ paths:
       - name: taxYear
         in: path
         description: |
-          The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years.
+          The tax year the data applies to, for example, 2025-26. The start year and end year must not span two tax years.
         required: true
         schema:
           type: string
-          example: 2021-22
+          example: 2025-26
       - name: source
         in: path
         description: |
@@ -369,27 +367,19 @@ paths:
                   value:
                     code: FORMAT_TAX_YEAR
                     message: The provided tax year is invalid
-                RULE_DATE_RANGE_INVALID:
-                  description: |
-                    The specified date range is invalid
-                  value:
-                    code: RULE_DATE_RANGE_INVALID
-                    message: The date range should be a valid tax year
                 RULE_TAX_YEAR_NOT_SUPPORTED:
                   description: |
-                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
-                    or it is after the maximum tax year value.
+                    The specified tax year is outside the allowable tax years (the current tax year minus four years).
                   value:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
-                    message: The tax year specified does not lie within the supported
-                      range
+                    message: The specified tax year is outside the allowable tax years
+                      (the current tax year minus four years)
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
-                    The specified date range is outside the allowable tax years (the current tax year minus four years).
+                    Tax year range invalid. A tax year range of one year is required.
                   value:
                     code: RULE_TAX_YEAR_RANGE_INVALID
-                    message: The specified date range is outside the allowable tax
-                      years (the current tax year minus four years)
+                    message: A tax year range of one year is required
                 RULE_SOURCE_INVALID:
                   description: |
                     The source of data should be one of these All (Blended view), Customer or Contractor.
@@ -1405,11 +1395,11 @@ paths:
       - name: taxYear
         in: path
         description: |
-          The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years.
+          The tax year the data applies to, for example, 2025-26. The start year and end year must not span two tax years.
         required: true
         schema:
           type: string
-          example: 2021-22
+          example: 2025-26
       - name: Authorization
         in: header
         description: |
@@ -1532,13 +1522,12 @@ paths:
                   value:
                     code: FORMAT_SUBMISSION_ID
                     message: The provided submission ID is invalid
-                RULE_TAX_YEAR_RANGE_EXCEEDED:
+                RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
-                    The tax year range is exceeded.  A tax year range of one year is required.
+                    Tax year range invalid. A tax year range of one year is required.
                   value:
-                    code: RULE_TAX_YEAR_RANGE_EXCEEDED
-                    message: Tax year range exceeded. A tax year range of one year
-                      is required
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
                 RULE_TAX_YEAR_NOT_SUPPORTED:
                   description: |
                     The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
@@ -2019,11 +2008,11 @@ components:
       name: taxYear
       in: path
       description: |
-        The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years.
+        The tax year the data applies to, for example, 2025-26. The start year and end year must not span two tax years.
       required: true
       schema:
         type: string
-        example: 2021-22
+        example: 2025-26
     source:
       name: source
       in: path
@@ -2117,26 +2106,19 @@ components:
       value:
         code: FORMAT_TAX_YEAR
         message: The provided tax year is invalid
-    ruleDateRangeInvalid:
+    ruleTaxYearNotSupportedCY-4:
       description: |
-        The specified date range is invalid
-      value:
-        code: RULE_DATE_RANGE_INVALID
-        message: The date range should be a valid tax year
-    ruleTaxYearNotSupported:
-      description: |
-        The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
-        or it is after the maximum tax year value.
+        The specified tax year is outside the allowable tax years (the current tax year minus four years).
       value:
         code: RULE_TAX_YEAR_NOT_SUPPORTED
-        message: The tax year specified does not lie within the supported range
+        message: The specified tax year is outside the allowable tax years (the current
+          tax year minus four years)
     ruleTaxYearRangeInvalid:
       description: |
-        The specified date range is outside the allowable tax years (the current tax year minus four years).
+        Tax year range invalid. A tax year range of one year is required.
       value:
         code: RULE_TAX_YEAR_RANGE_INVALID
-        message: The specified date range is outside the allowable tax years (the
-          current tax year minus four years)
+        message: A tax year range of one year is required
     ruleSourceInvalid:
       description: |
         The source of data should be one of these All (Blended view), Customer or Contractor.
@@ -2224,12 +2206,25 @@ components:
         code: RULE_GROSS_AMOUNT_PAID
         message: The gross amount should be a positive number less than 99999999999.99
           up to 2 decimal places
+    ruleDateRangeInvalid:
+      description: |
+        The specified date range is invalid
+      value:
+        code: RULE_DATE_RANGE_INVALID
+        message: The date range should be a valid tax year
     ruleUnalignedDeductionsPeriod:
       description: |
         The deductions periods do not align with the tax year supplied.
       value:
         code: RULE_UNALIGNED_DEDUCTIONS_PERIOD
         message: The deductions periods do not align with the tax year supplied
+    ruleTaxYearNotSupported:
+      description: |
+        The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
+        or it is after the maximum tax year value.
+      value:
+        code: RULE_TAX_YEAR_NOT_SUPPORTED
+        message: The tax year specified does not lie within the supported range
     ruleDeductionsDateRangeInvalid:
       description: |
         The deductions period does not align from the 6th of one month to the 5th of the following month.
@@ -2268,12 +2263,6 @@ components:
       value:
         code: FORMAT_SUBMISSION_ID
         message: The provided submission ID is invalid
-    ruleTaxYearRangeExceeded:
-      description: |
-        The tax year range is exceeded.  A tax year range of one year is required.
-      value:
-        code: RULE_TAX_YEAR_RANGE_EXCEEDED
-        message: Tax year range exceeded. A tax year range of one year is required
   headers:
     correlationId:
       description: |
