@@ -47,9 +47,7 @@ paths:
         | N/A - DEFAULT                                   | Simulates success response with customer and contractor deductions.                                                         |
         | N/A - DEFAULT <br> using source **all**         | Simulates success response with customer and contractor deductions                                                          |
         | N/A - DEFAULT <br> using source **contractor**  | Simulates success response with contractor deductions.                                                                      |
-        | N/A - DEFAULT <br> using source **customer**    | Simulates success response with customer deductions.                                                                        |
-        | TAX_YEAR_RANGE_INVALID                          | Simulates the scenario where specified tax year is outside the allowable tax years (the current tax year minus four years). |
-        | TAX_YEAR_NOT_SUPPORTED                          | Simulates the scenario where the tax year is not supported.                                                                 |
+        | N/A - DEFAULT <br> using source **customer**    | Simulates success response with customer deductions.                                                                        |                                                               |
         | NOT_FOUND                                       | Simulates the scenario where no data is found.                                                                              |
         | DYNAMIC                                         | The following response values will change to correspond to the values submitted in the request: <br/> &bull; fromDate <br/> &bull; toDate <br/> &bull; deductionFromDate <br/> &bull; deductionToDate <br/> &bull; submissionDate <br/> &bull; source |
         | STATEFUL                                        | Performs a stateful retrieve.                                                                                               |
@@ -65,10 +63,10 @@ paths:
         - name: taxYear
           in: path
           description: |
-            The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years.
-          schema: &ref_28
+            The tax year the data applies to, for example, 2025-26. The start year and end year must not span two tax years.
+          schema: &ref_27
             type: string
-            example: 2021-22
+            example: 2025-26
           required: true
         - in: path
           name: source
@@ -409,28 +407,21 @@ paths:
                 FORMAT_TAX_YEAR:
                   description: |
                     The format of the supplied tax year field is not valid.
-                  value: &ref_29
+                  value: &ref_28
                     code: FORMAT_TAX_YEAR
                     message: The provided tax year is invalid
-                RULE_DATE_RANGE_INVALID:
-                  description: |
-                    The specified date range is invalid
-                  value: &ref_11
-                    code: RULE_DATE_RANGE_INVALID
-                    message: The date range should be a valid tax year
                 RULE_TAX_YEAR_NOT_SUPPORTED:
                   description: |
-                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
-                    or it is after the maximum tax year value.
-                  value: &ref_12
+                    The specified tax year is outside the allowable tax years (the current tax year minus four years).
+                  value:
                     code: RULE_TAX_YEAR_NOT_SUPPORTED
-                    message: The tax year specified does not lie within the supported range
+                    message: The specified tax year is outside the allowable tax years (the current tax year minus four years)
                 RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
-                    The specified date range is outside the allowable tax years (the current tax year minus four years).
-                  value:
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: &ref_30
                     code: RULE_TAX_YEAR_RANGE_INVALID
-                    message: The specified date range is outside the allowable tax years (the current tax year minus four years)
+                    message: A tax year range of one year is required
                 RULE_SOURCE_INVALID:
                   description: |
                     The source of data should be one of these All (Blended view), Customer or Contractor.
@@ -446,7 +437,7 @@ paths:
                 RULE_INCORRECT_GOV_TEST_SCENARIO:
                   description: |
                     The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
-                  value: &ref_13
+                  value: &ref_11
                     code: RULE_INCORRECT_GOV_TEST_SCENARIO
                     message: The supplied Gov-Test-Scenario is not valid
         '403':
@@ -492,7 +483,7 @@ paths:
                 CLIENT_OR_AGENT_NOT_AUTHORISED:
                   description: |
                     The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
-                  value: &ref_14
+                  value: &ref_12
                     code: CLIENT_OR_AGENT_NOT_AUTHORISED
                     message: The client and/or agent is not authorised
         '404':
@@ -538,7 +529,7 @@ paths:
                 MATCHING_RESOURCE_NOT_FOUND:
                   description: |
                     The remote endpoint has indicated that no data can be found for the given period.
-                  value: &ref_26
+                  value: &ref_25
                     code: MATCHING_RESOURCE_NOT_FOUND
                     message: Matching resource not found
   /individuals/deductions/cis/{nino}/amendments:
@@ -568,7 +559,7 @@ paths:
           in: header
           description: |
             An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
-          schema: &ref_15
+          schema: &ref_13
             type: string
             example: Bearer bb7fed3fe10dd235a2ccda3d50fb
           required: true
@@ -582,7 +573,7 @@ paths:
           in: header
           description: |
             Specifies the format of the request body, which must be JSON.
-          schema: &ref_16
+          schema: &ref_14
             type: string
             example: application/json
           required: true
@@ -803,13 +794,13 @@ paths:
                 FORMAT_DEDUCTIONS_FROM_DATE:
                   description: |
                     The deductions From date is not a valid date format.
-                  value: &ref_17
+                  value: &ref_15
                     code: FORMAT_DEDUCTIONS_FROM_DATE
                     message: The provided deductions From date is invalid
                 FORMAT_DEDUCTIONS_TO_DATE:
                   description: |
                     The deductions To date is not a valid date format.
-                  value: &ref_18
+                  value: &ref_16
                     code: FORMAT_DEDUCTIONS_TO_DATE
                     message: The provided deductions To date is invalid
                 FORMAT_EMPLOYER_REFERENCE:
@@ -839,40 +830,44 @@ paths:
                 RULE_DEDUCTIONS_AMOUNT:
                   description: |
                     The deductions amount should be a positive number less than 99999999999.99 up to 2 decimal places.
-                  value: &ref_19
+                  value: &ref_17
                     code: RULE_DEDUCTIONS_AMOUNT
                     message: The deductions amount should be a positive number less than 99999999999.99 up to 2 decimal places
                 RULE_COST_OF_MATERIALS:
                   description: |
                     The cost of materials should be a positive number less than 99999999999.99  up to 2 decimal places.
-                  value: &ref_20
+                  value: &ref_18
                     code: RULE_COST_OF_MATERIALS
                     message: The cost of materials should be a positive number less than 99999999999.99 up to 2 decimal places
                 RULE_GROSS_AMOUNT_PAID:
                   description: |
                     The gross amount should be a positive number less than 99999999999.99 up to 2 decimal places.
-                  value: &ref_21
+                  value: &ref_19
                     code: RULE_GROSS_AMOUNT_PAID
                     message: The gross amount should be a positive number less than 99999999999.99 up to 2 decimal places
                 RULE_DATE_RANGE_INVALID:
                   description: |
                     The specified date range is invalid
-                  value: *ref_11
+                  value:
+                    code: RULE_DATE_RANGE_INVALID
+                    message: The date range should be a valid tax year
                 RULE_UNALIGNED_DEDUCTIONS_PERIOD:
                   description: |
                     The deductions periods do not align with the tax year supplied.
-                  value: &ref_23
+                  value: &ref_21
                     code: RULE_UNALIGNED_DEDUCTIONS_PERIOD
                     message: The deductions periods do not align with the tax year supplied
                 RULE_TAX_YEAR_NOT_SUPPORTED:
                   description: |
                     The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
                     or it is after the maximum tax year value.
-                  value: *ref_12
+                  value: &ref_23
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported range
                 RULE_DEDUCTIONS_DATE_RANGE_INVALID:
                   description: |
                     The deductions period does not align from the 6th of one month to the 5th of the following month.
-                  value: &ref_22
+                  value: &ref_20
                     code: RULE_DEDUCTIONS_DATE_RANGE_INVALID
                     message: The deductions period must align from the 6th of one month to the 5th of the following month
                 RULE_TAX_YEAR_NOT_ENDED:
@@ -890,17 +885,17 @@ paths:
                 RULE_DUPLICATE_PERIOD:
                   description: |
                     More than one deduction period has been supplied for the same month or period.
-                  value: &ref_24
+                  value: &ref_22
                     code: RULE_DUPLICATE_PERIOD
                     message: More than one deduction period has been supplied for the same month or period
                 RULE_INCORRECT_GOV_TEST_SCENARIO:
                   description: |
                     The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
-                  value: *ref_13
+                  value: *ref_11
                 RULE_OUTSIDE_AMENDMENT_WINDOW:
                   description: |
                     The request cannot be completed as you are outside the amendment window.
-                  value: &ref_25
+                  value: &ref_24
                     code: RULE_OUTSIDE_AMENDMENT_WINDOW
                     message: You are outside the amendment window
         '403':
@@ -946,7 +941,7 @@ paths:
                 CLIENT_OR_AGENT_NOT_AUTHORISED:
                   description: |
                     The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
-                  value: *ref_14
+                  value: *ref_12
   /individuals/deductions/cis/{nino}/amendments/{submissionId}:
     put:
       summary: Amend CIS Deductions for Subcontractor
@@ -974,7 +969,7 @@ paths:
           in: path
           description: |
             A unique identifier for the customer provided CIS deduction amendment.
-          schema: &ref_27
+          schema: &ref_26
             type: string
             example: 4557ecb5-fd32-48cc-81f5-e6acd1099f3c
           required: true
@@ -982,7 +977,7 @@ paths:
           in: header
           description: |
             An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
-          schema: *ref_15
+          schema: *ref_13
           required: true
         - name: Accept
           in: header
@@ -994,7 +989,7 @@ paths:
           in: header
           description: |
             Specifies the format of the request body, which must be JSON.
-          schema: *ref_16
+          schema: *ref_14
           required: true
         - name: Gov-Test-Scenario
           in: header
@@ -1157,54 +1152,54 @@ paths:
                 FORMAT_DEDUCTIONS_FROM_DATE:
                   description: |
                     The deductions From date is not a valid date format.
-                  value: *ref_17
+                  value: *ref_15
                 FORMAT_DEDUCTIONS_TO_DATE:
                   description: |
                     The deductions To date is not a valid date format.
-                  value: *ref_18
+                  value: *ref_16
                 RULE_DEDUCTIONS_AMOUNT:
                   description: |
                     The deductions amount should be a positive number less than 99999999999.99 up to 2 decimal places.
-                  value: *ref_19
+                  value: *ref_17
                 RULE_COST_OF_MATERIALS:
                   description: |
                     The cost of materials should be a positive number less than 99999999999.99  up to 2 decimal places.
-                  value: *ref_20
+                  value: *ref_18
                 RULE_GROSS_AMOUNT_PAID:
                   description: |
                     The gross amount should be a positive number less than 99999999999.99 up to 2 decimal places.
-                  value: *ref_21
+                  value: *ref_19
                 RULE_DEDUCTIONS_DATE_RANGE_INVALID:
                   description: |
                     The deductions period does not align from the 6th of one month to the 5th of the following month.
-                  value: *ref_22
+                  value: *ref_20
                 FORMAT_SUBMISSION_ID:
                   description: |
                     The format of the submission ID is not valid.
-                  value: &ref_30
+                  value: &ref_29
                     code: FORMAT_SUBMISSION_ID
                     message: The provided submission ID is invalid
                 RULE_UNALIGNED_DEDUCTIONS_PERIOD:
                   description: |
                     The deductions periods do not align with the tax year supplied.
-                  value: *ref_23
+                  value: *ref_21
                 RULE_DUPLICATE_PERIOD:
                   description: |
                     More than one deduction period has been supplied for the same month or period.
-                  value: *ref_24
+                  value: *ref_22
                 RULE_TAX_YEAR_NOT_SUPPORTED:
                   description: |
                     The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
                     or it is after the maximum tax year value.
-                  value: *ref_12
+                  value: *ref_23
                 RULE_OUTSIDE_AMENDMENT_WINDOW:
                   description: |
                     The request cannot be completed as you are outside the amendment window.
-                  value: *ref_25
+                  value: *ref_24
                 RULE_INCORRECT_GOV_TEST_SCENARIO:
                   description: |
                     The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
-                  value: *ref_13
+                  value: *ref_11
         '403':
           description: Forbidden
           headers:
@@ -1248,7 +1243,7 @@ paths:
                 CLIENT_OR_AGENT_NOT_AUTHORISED:
                   description: |
                     The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
-                  value: *ref_14
+                  value: *ref_12
         '404':
           description: Not Found
           headers:
@@ -1292,7 +1287,7 @@ paths:
                 MATCHING_RESOURCE_NOT_FOUND:
                   description: |
                     The remote endpoint has indicated that no data can be found for the given period.
-                  value: *ref_26
+                  value: *ref_25
   /individuals/deductions/cis/{nino}/amendments/{submissionId}/{taxYear}:
     delete:
       summary: Delete CIS Deductions for Subcontractor
@@ -1308,19 +1303,19 @@ paths:
           in: path
           description: |
             A unique identifier for the customer provided CIS deduction amendment.
-          schema: *ref_27
+          schema: *ref_26
           required: true
         - name: taxYear
           in: path
           description: |
-            The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years.
-          schema: *ref_28
+            The tax year the data applies to, for example, 2025-26. The start year and end year must not span two tax years.
+          schema: *ref_27
           required: true
         - name: Authorization
           in: header
           description: |
             An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
-          schema: *ref_15
+          schema: *ref_13
           required: true
         - name: Accept
           in: header
@@ -1417,30 +1412,28 @@ paths:
                 FORMAT_TAX_YEAR:
                   description: |
                     The format of the supplied tax year field is not valid.
-                  value: *ref_29
+                  value: *ref_28
                 FORMAT_SUBMISSION_ID:
                   description: |
                     The format of the submission ID is not valid.
-                  value: *ref_30
-                RULE_TAX_YEAR_RANGE_EXCEEDED:
+                  value: *ref_29
+                RULE_TAX_YEAR_RANGE_INVALID:
                   description: |
-                    The tax year range is exceeded.  A tax year range of one year is required.
-                  value:
-                    code: RULE_TAX_YEAR_RANGE_EXCEEDED
-                    message: Tax year range exceeded. A tax year range of one year is required
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_30
                 RULE_TAX_YEAR_NOT_SUPPORTED:
                   description: |
                     The specified tax year is not supported. Either the tax year specified is before the minimum tax year value,
                     or it is after the maximum tax year value.
-                  value: *ref_12
+                  value: *ref_23
                 RULE_INCORRECT_GOV_TEST_SCENARIO:
                   description: |
                     The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
-                  value: *ref_13
+                  value: *ref_11
                 RULE_OUTSIDE_AMENDMENT_WINDOW:
                   description: |
                     The request cannot be completed as you are outside the amendment window.
-                  value: *ref_25
+                  value: *ref_24
         '403':
           description: Forbidden
           headers:
@@ -1484,7 +1477,7 @@ paths:
                 CLIENT_OR_AGENT_NOT_AUTHORISED:
                   description: |
                     The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
-                  value: *ref_14
+                  value: *ref_12
         '404':
           description: Not Found
           headers:
@@ -1528,7 +1521,7 @@ paths:
                 MATCHING_RESOURCE_NOT_FOUND:
                   description: |
                     The remote endpoint has indicated that no data can be found for the given period.
-                  value: *ref_26
+                  value: *ref_25
 components:
   securitySchemes:
     User-Restricted:
