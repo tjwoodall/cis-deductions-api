@@ -1,8 +1,11 @@
 openapi: 3.0.3
 info:
   title: CIS Deductions (MTD)
-  description: "# Send fraud prevention data\nHMRC monitors transactions to help protect\
-    \ your customers' confidential data from criminals and fraudsters. \n\n<div class=\"\
+  description: "The following endpoints are stateful in the Sandbox:\n  * Retrieve\
+    \ CIS Deductions for Subcontractor\n  * Create CIS Deductions for Subcontractor\n\
+    \  * Amend CIS Deductions for Subcontractor\n  * Delete CIS Deductions for Subcontractor\n\
+    \n# Send fraud prevention data\nHMRC monitors transactions to help protect your\
+    \ customers' confidential data from criminals and fraudsters. \n\n<div class=\"\
     govuk-warning-text warning-icon-fix\">\n  <span class=\"govuk-warning-text__icon\
     \ warning-icon-ui-fix\" aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\"\
     >\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You are\
